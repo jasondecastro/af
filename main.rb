@@ -17,56 +17,56 @@ end
 # instance in the hash, as well as initialize a
 # couple of things, such as the total amount of repos
 Students.students.each do |i|
-	@user = Octokit.user "#{i}"
-	@students[@user.login] = {
-		"user": @user.login,
-		"totalRepos": @user[:public_repos],
-		"totalCommits": 0,
-		"totalLinesOfCode": 0,
-		"testsCompleted": "#{rand(79..100)}%"
-	}
+  @user = Octokit.user "#{i}"
+  @students[@user.login] = {
+    "user": @user.login,
+    "totalRepos": @user[:public_repos],
+    "totalCommits": 0,
+    "totalLinesOfCode": 0,
+    "testsCompleted": "#{rand(79..100)}%"
+  }
 end
 
 # Find the student's total lines of code and
 # add it all up then push it inside the hash
 def findLinesOfCode()
-	@students.each do |student|
-		repos = Octokit.repositories "#{student[0]}"
-		totalLinesOfCode = []
+  @students.each do |student|
+    repos = Octokit.repositories "#{student[0]}"
+    totalLinesOfCode = []
 
-		repos.each_with_index do |v, i|
-			begin
-				linesOfCode = Octokit.code_frequency_stats("#{student[0]}/#{repos[i][:name]}")
-				linesOfCode.each_with_index do |x, d|
-					totalLinesOfCode << linesOfCode[d][1]
-				end
-			rescue; end
-		end
+    repos.each_with_index do |v, i|
+      begin
+        linesOfCode = Octokit.code_frequency_stats("#{student[0]}/#{repos[i][:name]}")
+        linesOfCode.each_with_index do |x, d|
+          totalLinesOfCode << linesOfCode[d][1]
+        end
+      rescue; end
+    end
 
-		student[1][:totalLinesOfCode] = totalLinesOfCode.inject(0) do |sum, x| 
-			sum + x 
-		end
-	end
+    student[1][:totalLinesOfCode] = totalLinesOfCode.inject(0) do |sum, x| 
+      sum + x 
+    end
+  end
 end
 
 # Find the student's total number of commits and
 # add it all up then push it inside the hash
 def findCommits()
-	@students.each do |student|
-		repos = Octokit.repositories "#{student[0]}"
-		totalCommits = []
+  @students.each do |student|
+    repos = Octokit.repositories "#{student[0]}"
+    totalCommits = []
 
-		repos.each_with_index do |v, i|
-			begin
-				commits = Octokit.commits("#{student[0]}/#{repos[i][:name]}").length
-				totalCommits << commits
-			rescue; end
-		end
+    repos.each_with_index do |v, i|
+      begin
+        commits = Octokit.commits("#{student[0]}/#{repos[i][:name]}").length
+        totalCommits << commits
+      rescue; end
+    end
 
-		student[1][:totalCommits] = totalCommits.compact.inject(0) do |sum,x| 
-			sum + x 
-		end
-	end
+    student[1][:totalCommits] = totalCommits.compact.inject(0) do |sum,x| 
+      sum + x 
+    end
+  end
 end
 
 # Generate the CSV after everything is done and
@@ -74,10 +74,10 @@ end
 #
 # This implementation is a WIP. Could use formatting.
 def generateCSV()
-	findCommits
-	findLinesOfCode
+  findCommits
+  findLinesOfCode
 
-	CSV.open("data.csv", "wb") {|csv| @students.to_a.each {|elem| csv << elem} }
+  CSV.open("data.csv", "wb") {|csv| @students.to_a.each {|elem| csv << elem} }
 end
 
 generateCSV
