@@ -10,3 +10,7 @@ cd af
 gem install octokit
 ruby main.rb
 ```
+
+## Adding Students
+
+In order to add new students to this script, you need to edit the array in `students.rb` and add more GitHub usernames.
