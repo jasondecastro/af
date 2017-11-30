@@ -1,12 +1,13 @@
-require 'octokit'
 require 'csv'
+require 'octokit'
 require_relative 'students'
-require 'pry'
 
 # Initial variables
 @students = {}
 
 # This configures and initializes the Octokit gem
+# since this script will only be used on your computer,
+# I decided not to worry about obfuscation
 Octokit.configure do |c|
   c.login = 'flatnog'
   c.password = 'flatnog123'
@@ -27,7 +28,7 @@ Students.students.each do |i|
 end
 
 # Find the student's total lines of code and
-# add it all up, push it to the hash
+# add it all up then push it inside the hash
 def findLinesOfCode()
 	@students.each do |student|
 		repos = Octokit.repositories "#{student[0]}"
@@ -49,7 +50,7 @@ def findLinesOfCode()
 end
 
 # Find the student's total number of commits and
-# also invoke the findLinesOfCode method
+# add it all up then push it inside the hash
 def findCommits()
 	@students.each do |student|
 		repos = Octokit.repositories "#{student[0]}"
@@ -68,6 +69,10 @@ def findCommits()
 	end
 end
 
+# Generate the CSV after everything is done and
+# save it to your system as data.csv
+#
+# This implementation is a WIP. Could use formatting.
 def generateCSV()
 	findCommits
 	findLinesOfCode
@@ -76,5 +81,3 @@ def generateCSV()
 end
 
 generateCSV
-
-binding.pry
